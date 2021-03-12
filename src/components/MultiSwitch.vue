@@ -23,7 +23,7 @@
             :class="{ active: !defaultOptions.items.disabled || disabled}"
             class="selected"
             :for="label.name + group"
-            :type="multiple ? 'checkbox' : 'radio'"
+            type="radio"
         >
           {{ label.name }}
         </label>
@@ -32,7 +32,7 @@
             :style="labelStyle"
             :class="{active: !defaultOptions.items.disabled || disabled}"
             :for="label.name + group"
-            :type="multiple ? 'checkbox' : 'radio'"
+            type="radio"
         >
           {{ label.name }}
         </label>
@@ -78,25 +78,25 @@ export default {
   created () {
     this.defaultOptions = {
       layout: {
-        color: 'black',
-        backgroundColor: 'lightgray',
+        color: '#0D47A1',
+        backgroundColor: 'white',
         selectedColor: 'white',
-        selectedBackgroundColor: 'green',
+        selectedBackgroundColor: '#0D47A1',
         borderColor: 'gray',
         fontFamily: 'Arial',
         fontWeight: 'normal',
-        fontWeightSelected: 'bold',
+        fontWeightSelected: 'normal',
         squareCorners: false,
         noBorder: false
       },
       size: {
-        fontSize: 1.5,
-        height: 3.25,
+        fontSize: 1,
+        height: 3.5,
         padding: 0.5,
         width: 10
       },
       items: {
-        delay: 0.4,
+        delay: 0.3,
         preSelected: 'unknown',
         disabled: false
       }
@@ -108,7 +108,7 @@ export default {
     }
     if (this.defaultOptions.items.preSelected !== 'unknown') {
       if (this.multiple) {
-        this.selectedArray = [this.defaultOptions.items.preSelected]
+        this.selectedArray = this.defaultOptions.items.preSelected
       } else {
         this.selectedItem = this.defaultOptions.items.preSelected
       }
@@ -157,7 +157,7 @@ export default {
     toggle (event) {
       if (!this.defaultOptions.items.disabled) {
         if (this.multiple) {
-          if (this.selectedArray.includes(event.target.id)) {
+          if (this.selectedArray.includes(event.target.id) && this.selectedArray.length > 1) {
             this.selectedArray = this.selectedArray.filter(item => item !== event.target.id)
           } else {
             this.selectedArray.push(event.target.id)

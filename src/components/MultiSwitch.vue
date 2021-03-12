@@ -160,7 +160,7 @@ export default {
           if (this.selectedArray.includes(event.target.id) && this.selectedArray.length > 1) {
             this.selectedArray = this.selectedArray.filter(item => item !== event.target.id)
           } else {
-            this.selectedArray.push(event.target.id)
+            !this.selectedArray.includes(event.target.id) ? this.selectedArray.push(event.target.id) : null
           }
           this.$emit('input', this.selectedArray)
           this.$emit('change', {

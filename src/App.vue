@@ -6,29 +6,26 @@
       dark
     >
       <div class="d-flex align-center">
-        <span
-          class="mr-2"
-        >
+        <span>
           InterPriceTest
         </span>
       </div>
     </v-app-bar>
 
     <v-main>
-      <HelloWorld/>
+      <TableView/>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
 import jsonData from "./data.json"
-
+import TableView from "@/components/TableView";
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    TableView
   },
 
   data: () => ({

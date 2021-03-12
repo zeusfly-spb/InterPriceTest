@@ -1,16 +1,24 @@
 <template>
   <div class="mt-5 ml-5">
-    <SwitcherRow/>
+    <v-row>
+      <CurrencySwitcher
+          v-model="currency"
+      />
+
+    </v-row>
 
   </div>
 </template>
 
 <script>
-import SwitcherRow from "@/components/SwitcherRow"
+import CurrencySwitcher from "@/components/CurrencySwitcher"
 export default {
   name: 'TableView',
+  data: () =>  ({
+    currency: 'USD'
+  }),
   components: {
-    SwitcherRow
+    CurrencySwitcher
   }
 }
 </script>

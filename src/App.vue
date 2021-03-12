@@ -13,7 +13,9 @@
     </v-app-bar>
 
     <v-main>
-      <TableView/>
+      <TableView
+        :raw-data="jsonData"
+      />
     </v-main>
   </v-app>
 </template>

@@ -78,10 +78,10 @@ export default {
   created () {
     this.defaultOptions = {
       layout: {
-        color: '#0D47A1',
+        color: this.primaryColor,
         backgroundColor: 'white',
         selectedColor: 'white',
-        selectedBackgroundColor: '#0D47A1',
+        selectedBackgroundColor: this.primaryColor,
         borderColor: 'gray',
         fontFamily: 'Arial',
         fontWeight: 'normal',
@@ -107,6 +107,7 @@ export default {
   },
   data () {
     return {
+      primaryColor: '#4e7091',
       selected: false,
       selectedArray: [],
       selectedItem: 'unknown',

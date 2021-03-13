@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-5 ml-5 mr-5">
+  <div class="mt-7 ml-5 mr-5">
     <v-row>
       <CurrencySwitcher
         v-model="currency"
@@ -44,7 +44,11 @@
                 {{ item.DateSent | moment('DD-MMM-YY') }}
               </td>
               <td>
-                <strong>{{ item.Company }}</strong>
+                <span
+                  :style="{'font-weight': item.Quote ? 'bold' : 'normal'}"
+                >
+                  {{ item.Company }}
+                </span>
               </td>
               <template
                 v-for="period in periods"
@@ -84,10 +88,14 @@
                   <div
                       class="quote-field"
                   >
-                    <div>
+                    <div
+                      class="centered"
+                    >
                       {{ average({currency: currency, years: +header.duration, mode: currentMode, type: 'FIX'}) }}
                     </div>
-                    <div>
+                    <div
+                      class="centered"
+                    >
                       {{ average({currency: currency, years: +header.duration, mode: currentMode, type: 'FRN'}) }}
                     </div>
                   </div>

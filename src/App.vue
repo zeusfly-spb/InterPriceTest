@@ -2,7 +2,8 @@
   <v-app>
     <v-app-bar
       app
-      color="primary"
+      dense
+      color="#4e7091"
       dark
     >
       <div class="d-flex align-center">
@@ -16,6 +17,16 @@
         :raw-data="jsonData"
       />
     </v-main>
+    <v-footer
+      :absolute="false"
+      app
+    >
+      <span
+        class="copyright"
+      >
+        Saifutdinov &copy; {{ new Date().getFullYear() }}
+      </span>
+    </v-footer>
   </v-app>
 </template>
 
@@ -38,6 +49,13 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
+}
+.centered {
+  text-align: center;
+  width: 100%;
+}
+.copyright{
+  color: #4e7091
 }
 </style>

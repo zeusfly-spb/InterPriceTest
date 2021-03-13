@@ -3,8 +3,16 @@
     <div
       class="quote-field"
     >
-      <div>{{ typeValue('FIX') }}</div>
-      <div>{{ typeValue('FRN') }}</div>
+      <div
+        class="centered"
+      >
+        {{ typeValue('FIX') }}
+      </div>
+      <div
+        class="centered"
+      >
+        {{ typeValue('FRN') }}
+      </div>
     </div>
   </td>
 
@@ -49,4 +57,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>

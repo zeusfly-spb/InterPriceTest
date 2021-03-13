@@ -19,7 +19,7 @@
           hide-default-footer
           show-expand
           item-key="Id"
-          :items="rows"
+          :items="rawData"
           :headers="headers"
           :expanded.sync="expanded"
         >
@@ -51,7 +51,7 @@
               >
                 <QuoteField
                     v-if="shownYears.includes(`${period} YRS`)"
-                    :key="period.Id"
+                    :key="period"
                     :company-data="companyYearsData({id: item.Id, years: period})"
                     :mode="currentMode"
                 />
@@ -70,7 +70,31 @@
                   :position="pos"
               />
             </template>
-            </template>
+          </template>
+          <template v-slot:body.append>
+            <tr>
+              <td></td><td></td>
+              <td>{{ `Average by ${currentMode}` }}</td>
+              <template
+                v-for="(header, index) in quoteHeaders"
+              >
+                <td
+                  :key="`${header.value}${index}`"
+                >
+                  <div
+                      class="quote-field"
+                  >
+                    <div>
+                      {{ average({currency: currency, years: +header.duration, mode: currentMode, type: 'FIX'}) }}
+                    </div>
+                    <div>
+                      {{ average({currency: currency, years: +header.duration, mode: currentMode, type: 'FRN'}) }}
+                    </div>
+                  </div>
+                </td>
+              </template>
+            </tr>
+          </template>
         </v-data-table>
       </v-card>
     </v-row>
@@ -97,7 +121,6 @@ export default {
   data: () =>  ({
     expanded: [],
     modes: ['Spread', 'Yield', '3MLSpread'],
-    // periods: [5, 10, 40],
     currency: 'USD',
     currentMode: 'Spread',
     shownYears: []
@@ -139,14 +162,35 @@ export default {
       ]
       return [...stat, ...this.quoteHeaders]
     },
-    rows () {
-      return this.rawData
+    allQuotes () {
+      let result = []
+      this.rawData.forEach(data => {
+        if (data.Quote) {
+          data.Quote.forEach(quote => result.push(quote))
+        }
+      })
+      return result
     }
   },
   methods: {
+    average ({currency, years, type, mode}) {
+      let result
+      const check = quote => quote.Currency === currency && +quote.Years === years && quote.CouponType === type
+      const adder = (a, b) => a + b[mode]
+      const relevant = this.allQuotes.filter(quote => check(quote))
+      const amount = relevant.reduce(adder, 0)
+      const value = amount / relevant.length
+      if (['Spread', '3MLSpread'].includes(mode)) {
+        +value ? result = `+${Math.round(value)}bp` : null
+      } else {
+        +value ? result = `${value.toFixed(3)}%` : null
+      }
+      return result
+    },
     companyYearsData ({id, years}) {
       const companyData = this.rawData.find(item => item.Id === id) || null
-      return companyData && companyData.Quote && companyData.Quote.find(item => item.Years === years) || null
+      return companyData && companyData.Quote && companyData.Quote
+          .filter(item => item.Years === years && item.Currency === this.currency) || null
     },
     sendExpandedData (id) {
       const sortFn = (a, b) => a.period - b.period

@@ -33,3 +33,11 @@ export default {
   }
 }
 </script>
+<style>
+.quote-field {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+</style>

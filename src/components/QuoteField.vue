@@ -15,7 +15,7 @@ export default {
   name: 'QuoteField',
   props: {
     companyData: {
-      type: Object
+      type: Array
     },
     mode: {
       type: String,
@@ -30,11 +30,9 @@ export default {
       this.activeCurrency = currency
     },
     typeValue (type) {
-      let result = ''
-      if (!this.companyData || this.companyData.CouponType !== type || this.companyData.Currency !== this.activeCurrency) {
-        return result
-      }
-      const value =  this.companyData[this.mode] || null
+      let result
+      const relevant = this.companyData && this.companyData.find(item => item.CouponType === type) || null
+      const value = relevant && relevant[this.mode] || null
       if (['Spread', '3MLSpread'].includes(this.mode)) {
         +value ? result = `+${value}bp` : null
       } else {
@@ -51,10 +49,4 @@ export default {
 </script>
 
 <style scoped>
-.quote-field {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-}
 </style>

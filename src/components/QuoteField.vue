@@ -15,8 +15,7 @@ export default {
   name: 'QuoteField',
   props: {
     companyData: {
-      type: Object,
-      required: true
+      type: Object
     },
     mode: {
       type: String,

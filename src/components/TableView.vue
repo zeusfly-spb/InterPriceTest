@@ -16,9 +16,9 @@
     <v-row>
       <v-card width="100vw">
         <v-data-table
-            hide-default-footer
-            :items="rows"
-            :headers="headers"
+          hide-default-footer
+          :items="rows"
+          :headers="headers"
         >
           <template v-slot:header.col5YRS>
             <QuoteHeader :years="5"/>
@@ -38,21 +38,16 @@
               <td>
                 <strong>{{ item.Company }}</strong>
               </td>
-              <QuoteField
-                v-if="shownYears.includes('5 YRS')"
-                :company-data="companyYearsData({company: item.Company, years: 5})"
-                :mode="currentMode"
-              />
-              <QuoteField
-                v-if="shownYears.includes('10 YRS')"
-                :company-data="companyYearsData({company: item.Company, years: 10})"
-                :mode="currentMode"
-              />
-              <QuoteField
-                v-if="shownYears.includes('40 YRS')"
-                :company-data="companyYearsData({company: item.Company, years: 40})"
-                :mode="currentMode"
-              />
+              <template
+                v-for="(period, index) in periods"
+              >
+                <QuoteField
+                    v-if="shownYears.includes(`${period} YRS`)"
+                    :key="index"
+                    :company-data="companyYearsData({company: item.Company, years: period})"
+                    :mode="currentMode"
+                />
+              </template>
             </tr>
           </template>
         </v-data-table>
@@ -76,24 +71,14 @@ export default {
     }
   },
   data: () =>  ({
-    currency: 'USD',
     periods: [5, 10, 40],
-    modes: ['Spread', 'Yield', '3MLSpread'],
+    currency: 'USD',
     currentMode: 'Spread',
-    shownYears: ['5 YRS', '10 YRS', '40 YRS']
+    shownYears: []
   }),
   computed: {
     years () {
       return this.periods.map(item => `${item} YRS`)
-    },
-    presentYears () {
-      let present = []
-      this.rawData.forEach(item => {
-        if (item.Quote) {
-          item.Quote.forEach(quote => present.push(quote.Years))
-        }
-      })
-      return [... new Set(present)]
     },
     headers () {
       const stat = [
@@ -104,7 +89,11 @@ export default {
       this.years.forEach(item => {
         if (this.shownYears.includes(item)) {
           const itemParams = item.split(' ')
-          quoteHeaders.push({value: `col${itemParams.join('')}`, duration: +itemParams[0]})
+          quoteHeaders.push({
+            value: `col${itemParams.join('')}`,
+            sortable: false,
+            duration: +itemParams[0]
+          })
         }
       })
       quoteHeaders.sort((a, b) => a.duration - b.duration)
@@ -119,6 +108,9 @@ export default {
       const companyData = this.rawData.find(item => item.Company === company) || null
       return companyData && companyData.Quote && companyData.Quote.find(item => item.Years === years) || null
     }
+  },
+  created () {
+    this.shownYears = this.years
   },
   components: {
     CurrencySwitcher,

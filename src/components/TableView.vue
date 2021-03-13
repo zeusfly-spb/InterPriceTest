@@ -23,17 +23,15 @@
           :headers="headers"
           :expanded.sync="expanded"
         >
-
-          <template v-slot:header.col5YRS>
-            <QuoteHeader :years="5"/>
+          <template
+              v-for="header in quoteHeaders"
+              v-slot:[`header.${header.value}`]
+          >
+            <QuoteHeader
+                :years="header.duration"
+                :key="header.value"
+            />
           </template>
-          <template v-slot:header.col10YRS>
-            <QuoteHeader :years="10"/>
-          </template>
-          <template v-slot:header.col40YRS>
-            <QuoteHeader :years="40"/>
-          </template>
-
           <template v-slot:item="{ item }">
             <tr>
               <td>
@@ -116,9 +114,6 @@ export default {
     },
     years () {
       return this.periods.map(item => `${item} YRS`)
-    },
-    quoteHeaderNames () {
-      return this.quoteHeaders.map(item => item.value)
     },
     quoteHeaders () {
       const sortFn = (a, b) => a.duration - b.duration

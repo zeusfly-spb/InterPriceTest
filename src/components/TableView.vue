@@ -6,7 +6,7 @@
       />
       <div class="mr-5"/>
       <YearsSwitcher
-        v-model="years"
+        v-model="shownYears"
       />
       <div class="mr-5"/>
       <ModeSwitcher
@@ -38,17 +38,31 @@
               <td>
                 <strong>{{ item.Company }}</strong>
               </td>
+              <QuoteField
+                v-if="shownYears.includes('5 YRS')"
+                :company-data="companyYearsData({company: item.Company, years: 5})"
+                :mode="currentMode"
+              />
+              <QuoteField
+                v-if="shownYears.includes('10 YRS')"
+                :company-data="companyYearsData({company: item.Company, years: 10})"
+                :mode="currentMode"
+              />
+              <QuoteField
+                v-if="shownYears.includes('40 YRS')"
+                :company-data="companyYearsData({company: item.Company, years: 40})"
+                :mode="currentMode"
+              />
             </tr>
           </template>
         </v-data-table>
       </v-card>
-
-
     </v-row>
   </div>
 </template>
 
 <script>
+import QuoteField from "@/components/QuoteField"
 import QuoteHeader from "@/components/QuoteHeader"
 import CurrencySwitcher from "@/components/CurrencySwitcher"
 import YearsSwitcher from "@/components/YearsSwitcher"
@@ -63,12 +77,15 @@ export default {
   },
   data: () =>  ({
     currency: 'USD',
-    years: ['5 YRS', '10 YRS', '40 YRS'],
+    periods: [5, 10, 40],
     modes: ['Spread', 'Yield', '3MLSpread'],
     currentMode: 'Spread',
     shownYears: ['5 YRS', '10 YRS', '40 YRS']
   }),
   computed: {
+    years () {
+      return this.periods.map(item => `${item} YRS`)
+    },
     presentYears () {
       let present = []
       this.rawData.forEach(item => {
@@ -98,42 +115,20 @@ export default {
     }
   },
   methods: {
-    showPrimary ({company, years, type}) {
-      let result = ''
-      const companyData = this.rawData.find(item => item.Company === company)
-      const couponInfo = companyData.Quote.find(item => item.Years === years && item.CouponType === type)
-      const amount = couponInfo && couponInfo.Amount || null
-      if (['Spread', '3MLSpread'].includes(this.currentMode)) {
-        +amount ? result = `+${amount}bp` : null
-      } else {
-        result = `${amount.toFixed(3)}%`
-      }
-      return result
+    companyYearsData ({company, years}) {
+      const companyData = this.rawData.find(item => item.Company === company) || null
+      return companyData && companyData.Quote && companyData.Quote.find(item => item.Years === years) || null
     }
   },
   components: {
     CurrencySwitcher,
     YearsSwitcher,
     ModeSwitcher,
-    QuoteHeader
+    QuoteHeader,
+    QuoteField
   }
 }
 </script>
 
 <style scoped>
-.bottom-header {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-
-}
-.top-header {
-  text-align: center;
-  border-bottom: 1px solid black;
-}
-.quote-header {
-  display: flex;
-  flex-direction: column;
-}
 </style>

@@ -2,10 +2,22 @@
   <tr>
     <td></td><td></td>
     <td>{{ ownMode }}</td>
+    <template
+        v-for="(item, index) in expandedData"
+    >
+      <QuoteField
+          v-if="shownPeriods.includes(item.period)"
+          :company-data="item.yearsData"
+          :mode="ownMode"
+          :key="index"
+      />
+    </template>
+
   </tr>
 </template>
 
 <script>
+import QuoteField from "@/components/QuoteField"
 export default {
   name: 'WidenRow',
   props: {
@@ -20,13 +32,20 @@ export default {
     position: {
       type: Number,
       required: true
+    },
+    shownYears: {
+      type: Array,
+      required: true
     }
   },
   data: () => ({
     allModes: ['Spread', 'Yield', '3MLSpread'],
-    expandedData: null
+    expandedData: []
   }),
   computed: {
+    shownPeriods () {
+      return this.shownYears.map(item => +item.split(' ')[0])
+    },
     ownMode () {
       const remaining = this.allModes.filter(item => item !== this.currentMode)
       return remaining[this.position]
@@ -34,12 +53,15 @@ export default {
   },
   methods: {
     setExpandedData (data) {
-      console.log(`Received: ${data}`)
+      this.expandedData = data
     }
   },
   created () {
-    this.$eventHub.$emit(`getExpandedData`, this.commonData.Id)
-    // this.$eventHub.$on(`expanded-${this.commonData.Id}`, this.getExpandedData)
+    this.$eventHub.$on(`expandedDataResponse${this.commonData.Id}`, this.setExpandedData)
+    this.$eventHub.$emit(`expandedDataRequest`, this.commonData.Id)
+  },
+  components: {
+    QuoteField
   }
 }
 </script>

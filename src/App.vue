@@ -11,7 +11,6 @@
         </span>
       </div>
     </v-app-bar>
-
     <v-main>
       <TableView
         :raw-data="jsonData"
@@ -22,16 +21,15 @@
 
 <script>
 import jsonData from "./data.json"
-import TableView from "@/components/TableView";
+import TableView from "@/components/TableView"
+
 export default {
   name: 'App',
-
-  components: {
-    TableView
-  },
-
   data: () => ({
     jsonData: jsonData.Items
   }),
-};
+  components: {
+    TableView
+  }
+}
 </script>

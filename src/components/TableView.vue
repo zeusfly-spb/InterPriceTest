@@ -147,7 +147,8 @@ export default {
           result.push({
             value: `col${itemParams.join('')}`,
             duration: +itemParams[0],
-            sortable: false
+            sortable: false,
+            width: `${100 / this.shownYears.length}%`
           })
         }
       })
@@ -164,11 +165,7 @@ export default {
     },
     allQuotes () {
       let result = []
-      this.rawData.forEach(data => {
-        if (data.Quote) {
-          data.Quote.forEach(quote => result.push(quote))
-        }
-      })
+      this.rawData.forEach(data => data.Quote ? data.Quote.forEach(quote => result.push(quote)) : null)
       return result
     }
   },

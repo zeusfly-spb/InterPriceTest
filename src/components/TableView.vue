@@ -21,55 +21,13 @@
             :headers="headers"
         >
           <template v-slot:header.col5YRS>
-            <div
-              class="quote-header"
-            >
-              <div
-                class="top-header"
-              >
-                <strong>5 YRS</strong>
-              </div>
-              <div
-                class="bottom-header"
-              >
-                <div>FIX</div>
-                <div>FRN</div>
-              </div>
-            </div>
+            <QuoteHeader :years="5"/>
           </template>
           <template v-slot:header.col10YRS>
-            <div
-                class="quote-header"
-            >
-              <div
-                  class="top-header"
-              >
-                <strong>10 YRS</strong>
-              </div>
-              <div
-                  class="bottom-header"
-              >
-                <div>FIX</div>
-                <div>FRN</div>
-              </div>
-            </div>
+            <QuoteHeader :years="10"/>
           </template>
           <template v-slot:header.col40YRS>
-            <div
-                class="quote-header"
-            >
-              <div
-                  class="top-header"
-              >
-                <strong>40 YRS</strong>
-              </div>
-              <div
-                  class="bottom-header"
-              >
-                <div>FIX</div>
-                <div>FRN</div>
-              </div>
-            </div>
+            <QuoteHeader :years="40"/>
           </template>
 
           <template v-slot:item="{ item }">
@@ -91,6 +49,7 @@
 </template>
 
 <script>
+import QuoteHeader from "@/components/QuoteHeader"
 import CurrencySwitcher from "@/components/CurrencySwitcher"
 import YearsSwitcher from "@/components/YearsSwitcher"
 import ModeSwitcher from "@/components/ModeSwitcher"
@@ -138,10 +97,25 @@ export default {
       return this.rawData
     }
   },
+  methods: {
+    showPrimary ({company, years, type}) {
+      let result = ''
+      const companyData = this.rawData.find(item => item.Company === company)
+      const couponInfo = companyData.Quote.find(item => item.Years === years && item.CouponType === type)
+      const amount = couponInfo && couponInfo.Amount || null
+      if (['Spread', '3MLSpread'].includes(this.currentMode)) {
+        +amount ? result = `+${amount}bp` : null
+      } else {
+        result = `${amount.toFixed(3)}%`
+      }
+      return result
+    }
+  },
   components: {
     CurrencySwitcher,
     YearsSwitcher,
-    ModeSwitcher
+    ModeSwitcher,
+    QuoteHeader
   }
 }
 </script>

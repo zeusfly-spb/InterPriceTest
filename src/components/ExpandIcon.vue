@@ -1,13 +1,14 @@
 <template>
-  <div>
-    <transition>
-      <v-icon
-          @click="toggle"
-      >
-        {{ expanded ? 'mdi-chevron-up' : 'mdi-chevron-down'}}
-      </v-icon>
-    </transition>
-  </div>
+  <div
+    v-if="item.Id"
+  >
+    <v-icon
+     @click="toggle"
+     :key="expanded ? 1 : 2"
+    >
+     {{ expanded ? 'mdi-chevron-down' : 'mdi-chevron-right'}}
+    </v-icon>
+    </div>
 </template>
 
 <script>

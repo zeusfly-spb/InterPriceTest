@@ -23,6 +23,7 @@
           :headers="headers"
           :expanded.sync="expanded"
         >
+
           <template v-slot:header.col5YRS>
             <QuoteHeader :years="5"/>
           </template>
@@ -32,6 +33,7 @@
           <template v-slot:header.col40YRS>
             <QuoteHeader :years="40"/>
           </template>
+
           <template v-slot:item="{ item }">
             <tr>
               <td>
@@ -115,25 +117,32 @@ export default {
     years () {
       return this.periods.map(item => `${item} YRS`)
     },
+    quoteHeaderNames () {
+      return this.quoteHeaders.map(item => item.value)
+    },
+    quoteHeaders () {
+      const sortFn = (a, b) => a.duration - b.duration
+      let result = []
+      this.years.forEach(item => {
+        if (this.shownYears.includes(item)) {
+          const itemParams = item.split(' ')
+          result.push({
+            value: `col${itemParams.join('')}`,
+            duration: +itemParams[0],
+            sortable: false
+          })
+        }
+      })
+      result.sort(sortFn)
+      return result
+    },
     headers () {
       const stat = [
         {text: '', value: 'data-table-expand'},
         {text: 'DATE SENT', value: 'DateSent', width: '10em'},
         {text: 'COMPANY', value: 'Company', width: '20em'}
       ]
-      let quoteHeaders = []
-      this.years.forEach(item => {
-        if (this.shownYears.includes(item)) {
-          const itemParams = item.split(' ')
-          quoteHeaders.push({
-            value: `col${itemParams.join('')}`,
-            sortable: false,
-            duration: +itemParams[0]
-          })
-        }
-      })
-      quoteHeaders.sort((a, b) => a.duration - b.duration)
-      return [...stat, ...quoteHeaders]
+      return [...stat, ...this.quoteHeaders]
     },
     rows () {
       return this.rawData
@@ -168,6 +177,9 @@ export default {
     this.$eventHub.$on('periodsRequest', this.periodsBroadcast)
   },
   watch: {
+    years (val) {
+      this.shownYears = val
+    },
     currency () {
       this.broadcastActiveCurrency()
     },

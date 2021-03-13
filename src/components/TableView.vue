@@ -41,7 +41,7 @@
                 />
               </td>
               <td>
-                {{ item.DateSent | moment('DD-MMM-YY')}}
+                {{ item.DateSent | moment('DD-MMM-YY') }}
               </td>
               <td>
                 <strong>{{ item.Company }}</strong>
@@ -58,11 +58,18 @@
               </template>
             </tr>
           </template>
-          <template v-slot:expanded-item="{ headers, item }">
-            <td :colspan="headers.length">
-              More info about {{ item.Company }}
-            </td>
-          </template>
+          <template v-slot:expanded-item="{ item }">
+            <template
+              v-for="(pos, index) in [0, 1]"
+            >
+              <WidenRow
+                  :key="index"
+                  :common-data="item"
+                  :current-mode="currentMode"
+                  :position="pos"
+              />
+            </template>
+            </template>
         </v-data-table>
       </v-card>
     </v-row>
@@ -70,6 +77,7 @@
 </template>
 
 <script>
+import WidenRow from "@/components/WidenRow"
 import ExpandIcon from "@/components/ExpandIcon"
 import QuoteField from "@/components/QuoteField"
 import QuoteHeader from "@/components/QuoteHeader"
@@ -135,7 +143,8 @@ export default {
     ModeSwitcher,
     QuoteHeader,
     QuoteField,
-    ExpandIcon
+    ExpandIcon,
+    WidenRow
   }
 }
 </script>

@@ -17,8 +17,11 @@
       <v-card width="100vw">
         <v-data-table
           hide-default-footer
+          show-expand
+          item-key="Id"
           :items="rows"
           :headers="headers"
+          :expanded.sync="expanded"
         >
           <template v-slot:header.col5YRS>
             <QuoteHeader :years="5"/>
@@ -29,9 +32,14 @@
           <template v-slot:header.col40YRS>
             <QuoteHeader :years="40"/>
           </template>
-
           <template v-slot:item="{ item }">
             <tr>
+              <td>
+                <ExpandIcon
+                  v-model="expanded"
+                  :item="item"
+                />
+              </td>
               <td>
                 {{ item.DateSent | moment('DD-MMM-YY')}}
               </td>
@@ -50,6 +58,11 @@
               </template>
             </tr>
           </template>
+          <template v-slot:expanded-item="{ headers, item }">
+            <td :colspan="headers.length">
+              More info about {{ item.Company }}
+            </td>
+          </template>
         </v-data-table>
       </v-card>
     </v-row>
@@ -57,6 +70,7 @@
 </template>
 
 <script>
+import ExpandIcon from "@/components/ExpandIcon"
 import QuoteField from "@/components/QuoteField"
 import QuoteHeader from "@/components/QuoteHeader"
 import CurrencySwitcher from "@/components/CurrencySwitcher"
@@ -71,6 +85,8 @@ export default {
     }
   },
   data: () =>  ({
+    expanded: [],
+    modes: ['Spread', 'Yield', '3MLSpread'],
     periods: [5, 10, 40],
     currency: 'USD',
     currentMode: 'Spread',
@@ -82,6 +98,7 @@ export default {
     },
     headers () {
       const stat = [
+        {text: '', value: 'data-table-expand'},
         {text: 'DATE SENT', value: 'DateSent', width: '10em'},
         {text: 'COMPANY', value: 'Company', width: '20em'}
       ]
@@ -117,7 +134,8 @@ export default {
     YearsSwitcher,
     ModeSwitcher,
     QuoteHeader,
-    QuoteField
+    QuoteField,
+    ExpandIcon
   }
 }
 </script>

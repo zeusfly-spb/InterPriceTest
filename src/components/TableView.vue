@@ -144,13 +144,21 @@ export default {
             })}))
           .sort(sortFn)
       this.$eventHub.$emit(`expandedDataResponse${id}`, expandedData)
+    },
+    broadcastActiveCurrency () {
+      this.$eventHub.$emit('activeCurrencyBroadcast', this.currency)
     }
   },
   created () {
     this.shownYears = this.years
     this.$eventHub.$on('expandedDataRequest', this.sendExpandedData)
+    this.$eventHub.$on('activeCurrencyRequest', this.broadcastActiveCurrency)
   },
-
+  watch: {
+    currency () {
+      this.broadcastActiveCurrency()
+    }
+  },
   components: {
     CurrencySwitcher,
     YearsSwitcher,

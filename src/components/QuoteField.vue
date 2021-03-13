@@ -22,10 +22,16 @@ export default {
       required: true
     }
   },
+  data: () => ({
+    activeCurrency: null
+  }),
   methods: {
+    setActiveCurrency (currency) {
+      this.activeCurrency = currency
+    },
     typeValue (type) {
       let result = ''
-      if (!this.companyData || this.companyData.CouponType !== type) {
+      if (!this.companyData || this.companyData.CouponType !== type || this.companyData.Currency !== this.activeCurrency) {
         return result
       }
       const value =  this.companyData[this.mode] || null
@@ -36,8 +42,11 @@ export default {
       }
       return result
     }
+  },
+  created () {
+    this.$eventHub.$on(`activeCurrencyBroadcast`, this.setActiveCurrency)
+    this.$eventHub.$emit(`activeCurrencyRequest`)
   }
-
 }
 </script>
 

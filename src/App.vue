@@ -6,9 +6,9 @@
       dark
     >
       <div class="d-flex align-center">
-        <span>
+        <h4>
           InterPriceTest
-        </span>
+        </h4>
       </div>
     </v-app-bar>
     <v-main>

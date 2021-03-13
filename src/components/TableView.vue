@@ -177,7 +177,7 @@ export default {
       let result
       const check = quote => quote.Currency === currency && +quote.Years === years && quote.CouponType === type
       const adder = (a, b) => a + b[mode]
-      const relevant = this.allQuotes.filter(quote => check(quote))
+      const relevant = this.allQuotes.filter(quote => check(quote)).filter(item => +item[mode])
       const amount = relevant.reduce(adder, 0)
       const value = amount / relevant.length
       if (['Spread', '3MLSpread'].includes(mode)) {

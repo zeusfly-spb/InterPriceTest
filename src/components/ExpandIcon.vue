@@ -1,10 +1,12 @@
 <template>
   <div>
-    <v-icon
-      @click="toggle"
-    >
-      {{ expanded ? 'mdi-chevron-up' : 'mdi-chevron-down'}}
-    </v-icon>
+    <transition>
+      <v-icon
+          @click="toggle"
+      >
+        {{ expanded ? 'mdi-chevron-up' : 'mdi-chevron-down'}}
+      </v-icon>
+    </transition>
   </div>
 </template>
 

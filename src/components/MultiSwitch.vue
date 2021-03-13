@@ -14,7 +14,7 @@
             :disabled="defaultOptions.items.disabled || disabled"
             :id="label.name + group" :value="label.name"
             :name="name"
-            :type="multiple ? 'checkbox' : 'radio'"
+            type="radio"
             v-on:click="toggle"
         >
         <label

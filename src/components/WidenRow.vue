@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: 'WidenRows',
+  name: 'WidenRow',
   props: {
     commonData: {
       type: Object,
@@ -23,13 +23,23 @@ export default {
     }
   },
   data: () => ({
-    allModes: ['Spread', 'Yield', '3MLSpread']
+    allModes: ['Spread', 'Yield', '3MLSpread'],
+    expandedData: null
   }),
   computed: {
     ownMode () {
       const remaining = this.allModes.filter(item => item !== this.currentMode)
       return remaining[this.position]
     }
+  },
+  methods: {
+    setExpandedData (data) {
+      console.log(`Received: ${data}`)
+    }
+  },
+  created () {
+    this.$eventHub.$emit(`getExpandedData`, this.commonData.Id)
+    // this.$eventHub.$on(`expanded-${this.commonData.Id}`, this.getExpandedData)
   }
 }
 </script>

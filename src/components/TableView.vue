@@ -52,7 +52,7 @@
                 <QuoteField
                     v-if="shownYears.includes(`${period} YRS`)"
                     :key="index"
-                    :company-data="companyYearsData({company: item.Company, years: period})"
+                    :company-data="companyYearsData({id: item.Id, years: period})"
                     :mode="currentMode"
                 />
               </template>
@@ -129,13 +129,32 @@ export default {
     }
   },
   methods: {
-    companyYearsData ({company, years}) {
-      const companyData = this.rawData.find(item => item.Company === company) || null
+    companyYearsData ({id, years}) {
+      const companyData = this.rawData.find(item => item.Id === id) || null
       return companyData && companyData.Quote && companyData.Quote.find(item => item.Years === years) || null
+    },
+    sendExpandedData () {
+
     }
   },
   created () {
     this.shownYears = this.years
+  },
+  watch: {
+    expanded (val, oldVal) {
+      if (val.length > oldVal.length) {
+        const sortFn = (a, b) => a.period - b.period
+        const newItem = val.filter(newItem => !oldVal.map(oldItem => oldItem.Id).includes(newItem.Id))[0]
+        let expandedData = this.shownYears.map(title => +title.split(' ')[0])
+            .map(period => ({
+              period: period,
+              company: newItem.Company,
+              yearsData: this.companyYearsData({company: newItem.Company, years: period
+            })}))
+            .sort(sortFn)
+        this.$eventHub.$emit(`expanded-${newItem.Id}`, expandedData)
+      }
+    }
   },
   components: {
     CurrencySwitcher,

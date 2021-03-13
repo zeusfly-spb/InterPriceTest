@@ -19,7 +19,7 @@
           hide-default-footer
           show-expand
           item-key="Id"
-          :items="rawData"
+          :items="rows"
           :headers="headers"
           :expanded.sync="expanded"
         >
@@ -126,6 +126,9 @@ export default {
     shownYears: []
   }),
   computed: {
+    rows () {
+      return this.customSort(this.rawData)
+    },
     periods () {
       let periods = []
       this.rawData.forEach(item => {
@@ -133,7 +136,7 @@ export default {
           item.Quote.forEach(quote => quote.Currency === this.currency ? periods.push(+quote.Years) : null)
         }
       })
-      return [... new Set(periods)]
+      return [... new Set(periods)].sort((a, b) => a - b)
     },
     years () {
       return this.periods.map(item => `${item} YRS`)
@@ -152,8 +155,7 @@ export default {
           })
         }
       })
-      result.sort(sortFn)
-      return result
+      return result.sort(sortFn)
     },
     headers () {
       const stat = [
@@ -170,6 +172,13 @@ export default {
     }
   },
   methods: {
+    customSort (items) {
+      const parallel = (a, b) => a.DateSent === b.DateSent
+      const sortByDate = (a, b) => a.DateSent < b.DateSent || a.DateSent && !b.DateSent? -1 : a.DateSent > b.DateSent || !a.DateSent && b.DateSent ? 1 : 0
+      const sortByPreferred = (a, b) => parallel(a, b) && a.Preferred && !b.Preferred ? -1 : parallel(a, b) && !a.Preferred && b.Preferred ? 1 : 0
+      items.sort(sortByDate).sort(sortByPreferred)
+      return items
+    },
     average ({currency, years, type, mode}) {
       let result
       const check = quote => quote.Currency === currency && +quote.Years === years && quote.CouponType === type

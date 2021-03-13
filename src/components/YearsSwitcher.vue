@@ -33,7 +33,6 @@ export default {
   methods: {
     setPeriods (periods) {
       this.periods = periods
-      this.$forceUpdate()
     },
     change (event) {
       this.$emit('input', event.value)

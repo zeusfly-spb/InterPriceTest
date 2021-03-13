@@ -97,12 +97,21 @@ export default {
   data: () =>  ({
     expanded: [],
     modes: ['Spread', 'Yield', '3MLSpread'],
-    periods: [5, 10, 40],
+    // periods: [5, 10, 40],
     currency: 'USD',
     currentMode: 'Spread',
     shownYears: []
   }),
   computed: {
+    periods () {
+      let periods = []
+      this.rawData.forEach(item => {
+        if (item.Quote) {
+          item.Quote.forEach(quote => quote.Currency === this.currency ? periods.push(+quote.Years) : null)
+        }
+      })
+      return [... new Set(periods)]
+    },
     years () {
       return this.periods.map(item => `${item} YRS`)
     },
@@ -147,16 +156,23 @@ export default {
     },
     broadcastActiveCurrency () {
       this.$eventHub.$emit('activeCurrencyBroadcast', this.currency)
+    },
+    periodsBroadcast () {
+      this.$eventHub.$emit('periodsBroadcast', this.periods)
     }
   },
   created () {
     this.shownYears = this.years
     this.$eventHub.$on('expandedDataRequest', this.sendExpandedData)
     this.$eventHub.$on('activeCurrencyRequest', this.broadcastActiveCurrency)
+    this.$eventHub.$on('periodsRequest', this.periodsBroadcast)
   },
   watch: {
     currency () {
       this.broadcastActiveCurrency()
+    },
+    periods () {
+      this.periodsBroadcast()
     }
   },
   components: {

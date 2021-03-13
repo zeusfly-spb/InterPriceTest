@@ -13,26 +13,35 @@ import MultiSwitch from "@/components/MultiSwitch"
 export default {
   name: 'YearsSwitcher',
   data: () => ({
-    options: {
-      size: {
-        fontSize: 1,
-        height: 2.5,
-        width: 16,
-      },
-      items: {
-        preSelected: ['5 YRS', '10 YRS', '40 YRS'],
-        labels: [
-          {name: '5 YRS'},
-          {name: '10 YRS'},
-          {name: '40 YRS'}
-        ]
+    periods: []
+  }),
+  computed: {
+    options () {
+      return {
+        size: {
+          fontSize: 1,
+          height: 2.5,
+          width: 16,
+        },
+        items: {
+          preSelected: this.periods.map(item => `${item} YRS`),
+          labels: this.periods.map(item => ({name: `${item} YRS`}))
+        }
       }
     }
-  }),
+  },
   methods: {
+    setPeriods (periods) {
+      this.periods = periods
+      this.$forceUpdate()
+    },
     change (event) {
       this.$emit('input', event.value)
     }
+  },
+  created () {
+    this.$eventHub.$on(`periodsBroadcast`, this.setPeriods)
+    this.$eventHub.$emit(`periodsRequest`)
   },
   components: {
     MultiSwitch

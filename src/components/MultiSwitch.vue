@@ -103,20 +103,7 @@ export default {
     }
   },
   mounted () {
-    if (this.options !== null && this.options !== undefined) {
-      this.mergeDefaultOptionsWithProp(this.options)
-    }
-    if (this.defaultOptions.items.preSelected !== 'unknown') {
-      if (this.multiple) {
-        this.selectedArray = this.defaultOptions.items.preSelected
-      } else {
-        this.selectedItem = this.defaultOptions.items.preSelected
-      }
-      this.$emit('input', this.selectedItem)
-    } else if (this.value) {
-      this.selectedItem = this.value
-      this.$emit('input', this.selectedItem)
-    }
+    this.refresh()
   },
   data () {
     return {
@@ -154,6 +141,22 @@ export default {
     }
   },
   methods: {
+    refresh () {
+      if (this.options !== null && this.options !== undefined) {
+        this.mergeDefaultOptionsWithProp(this.options)
+      }
+      if (this.defaultOptions.items.preSelected !== 'unknown') {
+        if (this.multiple) {
+          this.selectedArray = this.defaultOptions.items.preSelected
+        } else {
+          this.selectedItem = this.defaultOptions.items.preSelected
+        }
+        this.$emit('input', this.selectedItem)
+      } else if (this.value) {
+        this.selectedItem = this.value
+        this.$emit('input', this.selectedItem)
+      }
+    },
     toggle (event) {
       if (!this.defaultOptions.items.disabled) {
         if (this.multiple) {
@@ -208,10 +211,8 @@ export default {
     value (val) {
       this.selectedItem = val
     },
-    options (val) {
-      if (val !== null && val !== undefined) {
-        this.mergeDefaultOptionsWithProp(val)
-      }
+    options () {
+      this.refresh()
     }
   }
 }

@@ -9,6 +9,7 @@
           v-if="shownPeriods.includes(item.period)"
           :company-data="item.yearsData"
           :mode="ownMode"
+          :current-mode="currentMode"
           :key="index"
       />
     </template>

@@ -58,6 +58,7 @@
                     :key="period"
                     :company-data="companyYearsData({id: item.Id, years: period})"
                     :mode="currentMode"
+                    :current-mode="currentMode"
                 />
               </template>
             </tr>
@@ -67,11 +68,11 @@
               v-for="(pos, index) in [0, 1]"
             >
               <WidenRow
-                  :shown-years="shownYears"
-                  :key="`expanded${index + 10 * Math.random()}`"
-                  :common-data="item"
-                  :current-mode="currentMode"
-                  :position="pos"
+                :shown-years="shownYears"
+                :key="`expanded${index + 10 * Math.random()}`"
+                :common-data="item"
+                :current-mode="currentMode"
+                :position="pos"
               />
             </template>
           </template>
@@ -135,7 +136,7 @@ export default {
   }),
   computed: {
     rows () {
-      return this.customSort(this.rawData)
+      return this.rawData
     },
     periods () {
       let periods = []
@@ -180,12 +181,11 @@ export default {
     }
   },
   methods: {
-    customSort (items) {
-      const parallel = (a, b) => a.DateSent === b.DateSent
-      const sortByDate = (a, b) => a.DateSent < b.DateSent || a.DateSent && !b.DateSent? -1 : a.DateSent > b.DateSent || !a.DateSent && b.DateSent ? 1 : 0
-      const sortByPreferred = (a, b) => parallel(a, b) && a.Preferred && !b.Preferred ? -1 : parallel(a, b) && !a.Preferred && b.Preferred ? 1 : 0
-      items.sort(sortByDate).sort(sortByPreferred)
-      return items
+    minimal ({currency, years, type, mode}) {
+      const check = quote => quote.Currency === currency && +quote.Years === years && quote.CouponType === type
+      const relevant = this.allQuotes.filter(quote => check(quote)).filter(item => +item[mode])
+      const values = relevant.map(item => +item[mode]).sort((a, b) => a - b)
+      return values[0]
     },
     average ({currency, years, type, mode}) {
       let result
@@ -221,6 +221,12 @@ export default {
     },
     periodsBroadcast () {
       this.$eventHub.$emit('periodsBroadcast', this.periods)
+    },
+    minimalResponse (data) {
+      const {currency, years, mode, signature} = data
+      const FIX = this.minimal({currency, years, mode, type: 'FIX'})
+      const FRN = this.minimal({currency, years, mode, type: 'FRN'})
+      this.$eventHub.$emit(`minimalResponse${signature}`, {FIX, FRN})
     }
   },
   created () {
@@ -228,6 +234,7 @@ export default {
     this.$eventHub.$on('expandedDataRequest', this.sendExpandedData)
     this.$eventHub.$on('activeCurrencyRequest', this.broadcastActiveCurrency)
     this.$eventHub.$on('periodsRequest', this.periodsBroadcast)
+    this.$eventHub.$on('minimalRequest', this.minimalResponse)
   },
   watch: {
     years (val) {

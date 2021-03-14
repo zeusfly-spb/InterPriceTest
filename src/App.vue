@@ -52,10 +52,18 @@ export default {
   justify-content: space-between;
 }
 .centered {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  margin: .7em;
   width: 100%;
+  height: 48px;
 }
 .copyright{
   color: #4e7091
+}
+.minimal {
+  background-color: #f4f2d2
 }
 </style>
